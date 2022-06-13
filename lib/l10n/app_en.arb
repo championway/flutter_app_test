@@ -1,0 +1,12 @@
+{
+    "language": "English",
+    "@language":{
+        "description": "The current language"
+    },
+    "hello": "Hello",
+    "@hello":{
+        "description": "hello world"
+    },
+    "good": "GOOD",
+    "nice": "NICE"
+}
