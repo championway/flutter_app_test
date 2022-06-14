@@ -4,6 +4,7 @@ import 'package:flutter_app_test/Page/AddPostPage.dart';
 import 'package:flutter_app_test/Page/BusinessTimePicker.dart';
 import 'package:flutter_app_test/Page/CouponWidget.dart';
 import 'package:flutter_app_test/Page/DateTimePickerPage.dart';
+import 'package:flutter_app_test/Page/OwnerRestaurantNumberPage.dart';
 import 'package:flutter_app_test/Page/QRCodePage.dart';
 import 'package:flutter_app_test/Page/QRScanPage.dart';
 import 'package:flutter_app_test/Page/RestaurantNumberPage.dart';
@@ -49,6 +50,9 @@ class _HomePageState extends State<HomePage> {
           }),
           _listTile(Icons.confirmation_number, "Number", () {
             pushPage(context, RestaurantNumberPage());
+          }),
+          _listTile(Icons.confirmation_number_outlined, "Owner Number", () {
+            pushPage(context, OwnerRestaurantNumberPage());
           }),
         ],
       ),
