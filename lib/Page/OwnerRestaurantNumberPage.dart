@@ -3,6 +3,13 @@ import 'package:flutter_app_test/Util/Util.dart';
 
 //https://www.youtube.com/watch?v=QBwLJKbCIlo&ab_channel=MadewithFlutter
 
+class RestaurantNumberModel {
+  RestaurantNumberModel(this.type, this.number);
+
+  int type;
+  int number;
+}
+
 class OwnerRestaurantNumberPage extends StatefulWidget {
   @override
   _OwnerRestaurantNumberPageState createState() =>
@@ -13,49 +20,181 @@ class _OwnerRestaurantNumberPageState extends State<OwnerRestaurantNumberPage> {
 //  final Function(int) onNumberSelected;
 //
 //  NumericPad({@required this.onNumberSelected});
+  int chooseType = 0;
+
   String numberPadValue = "";
+
+  RestaurantNumberModel inRestaurantNumberModel = RestaurantNumberModel(0, 24);
+  RestaurantNumberModel outRestaurantNumberModel = RestaurantNumberModel(1, 53);
+
+  @override
+  void initState() {
+    numberPadValue = inRestaurantNumberModel.number.toString();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("候位號碼牌系統"),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  numberPadValue,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        appBar: AppBar(
+          title: Text("候位號碼牌系統"),
+        ),
+        body: userInputArea());
+  }
+
+  Widget userInputArea() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            cardTypeCard(inRestaurantNumberModel),
+            cardTypeCard(outRestaurantNumberModel)
+          ],
+        ),
+        numberCard(chooseType == 0
+            ? inRestaurantNumberModel
+            : outRestaurantNumberModel),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              numberPadValue,
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+        IntrinsicHeight(
+          child: Row(
+            children: [
+              Expanded(flex: 3, child: numberPad()),
+              Expanded(
+                flex: 2,
+                child: Column(
+                  children: [
+                    buildAction(type: 0),
+                    buildAction(type: 1),
+                    buildAction(type: 2),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget cardTypeCard(RestaurantNumberModel restaurantNumberModel) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+        child: Card(
+          color: chooseType == restaurantNumberModel.type
+              ? Colors.yellow[300]
+              : Colors.white,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              customBorder: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              onTap: () {
+                setState(() {
+                  chooseType = restaurantNumberModel.type;
+                  numberPadValue = restaurantNumberModel.number.toString();
+                });
+              },
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                child: Column(
+                  children: [
+                    Text(restaurantNumberModel.type == 0 ? "內用" : "外帶"),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(restaurantNumberModel.number.toString())
+                  ],
                 ),
               ),
             ),
           ),
-          Expanded(
-            flex: 4,
-            child: Row(
-              children: [
-                Expanded(flex: 6, child: numberPad()),
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    children: [
-                      buildAction(type: 0),
-                      buildAction(type: 1),
-                      buildAction(type: 2),
-                    ],
-                  ),
+        ),
+      ),
+    );
+  }
+
+  Widget numberCard(RestaurantNumberModel restaurantNumberModel) {
+    return Card(
+      color: Colors.yellow[300],
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 3),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "餐廳更新時間 6/13 13:01:46",
+                          style: TextStyle(fontSize: 12),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          "手機更新時間 6/13 13:01:46",
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      ],
+                    ),
+                    Text("當前號碼", style: TextStyle(fontSize: 14))
+                  ],
                 ),
-              ],
-            ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 32),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          restaurantNumberModel.type == 0 ? "內用" : "外帶",
+                          style: TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          restaurantNumberModel.number.toString(),
+                          style: TextStyle(
+                              fontSize: 35, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -67,7 +206,7 @@ class _OwnerRestaurantNumberPageState extends State<OwnerRestaurantNumberPage> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           Container(
-            height: MediaQuery.of(context).size.height * 0.11,
+            height: MediaQuery.of(context).size.height * 0.09,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,7 +218,7 @@ class _OwnerRestaurantNumberPageState extends State<OwnerRestaurantNumberPage> {
             ),
           ),
           Container(
-            height: MediaQuery.of(context).size.height * 0.11,
+            height: MediaQuery.of(context).size.height * 0.09,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,7 +230,7 @@ class _OwnerRestaurantNumberPageState extends State<OwnerRestaurantNumberPage> {
             ),
           ),
           Container(
-            height: MediaQuery.of(context).size.height * 0.11,
+            height: MediaQuery.of(context).size.height * 0.09,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,7 +242,7 @@ class _OwnerRestaurantNumberPageState extends State<OwnerRestaurantNumberPage> {
             ),
           ),
           Container(
-            height: MediaQuery.of(context).size.height * 0.11,
+            height: MediaQuery.of(context).size.height * 0.09,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,37 +258,58 @@ class _OwnerRestaurantNumberPageState extends State<OwnerRestaurantNumberPage> {
     );
   }
 
+  int stringValueToInt(str) {
+    int valueInt;
+    if (str == "") {
+      valueInt = 0;
+    } else {
+      valueInt = int.parse(str);
+    }
+    return valueInt;
+  }
+
   onNumberSelected(value) {
     setState(() {
       if (value >= 0) {
-        if (numberPadValue.length + 1 <= 4) {
+        // press number
+        int numberPadValueInt = stringValueToInt(numberPadValue);
+        if (numberPadValueInt == 0) {
+          // we don't want first digit to ba '0'
+          numberPadValue = value.toString();
+        } else if (numberPadValue.length + 1 <= 4) {
+          // if value small than 4 digits, then add the number
           numberPadValue = numberPadValue + value.toString();
         }
       } else if (value == -1) {
+        // press backspace
         numberPadValue = numberPadValue.substring(0, numberPadValue.length - 1);
       } else if (value == -2) {
-        numberPadValue = "";
+        // press clear
+        numberPadValue = "0";
       }
     });
   }
 
   onActionSelected(value) {
     setState(() {
-      int numberPadValueInt;
-      if (numberPadValue == "") {
-        numberPadValueInt = 0;
-      } else {
-        numberPadValueInt = int.parse(numberPadValue);
-      }
+      int numberPadValueInt = stringValueToInt(numberPadValue);
       if (value == 1) {
+        // press +1
         if (numberPadValueInt < 9999) {
           numberPadValue = (numberPadValueInt + 1).toString();
         }
       } else if (value == -1) {
+        // press -1
         if (numberPadValueInt > 0) {
           numberPadValue = (numberPadValueInt - 1).toString();
         }
       } else if (value == 0) {
+        // press send
+        if (chooseType == 0){
+          inRestaurantNumberModel.number = stringValueToInt(numberPadValue);
+        } else{
+          outRestaurantNumberModel.number = stringValueToInt(numberPadValue);
+        }
         showToast("Send");
       }
     });
