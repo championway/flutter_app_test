@@ -182,3 +182,16 @@ BusinessHourModel mergeSingleDayBusinessHour(BusinessHourModel businessHour) {
 }
 
 enum BUSINESS_TIME_TYPE { DAY, DATE }
+
+String dateTimeToString(DateTime time) {
+  String str = time.month.toString() +
+      "/" +
+      time.day.toString().padLeft(2, "0") +
+      " " +
+      time.hour.toString().padLeft(2, "0") +
+      ":" +
+      time.minute.toString().padLeft(2, "0") +
+      ":" +
+      time.second.toString().padLeft(2, "0");
+  return str;
+}

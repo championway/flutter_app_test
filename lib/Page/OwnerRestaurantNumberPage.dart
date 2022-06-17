@@ -1,14 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_test/Util/Enum.dart';
 import 'package:flutter_app_test/Util/Util.dart';
+import 'package:flutter_app_test/model/RestaurantNumberModel.dart';
 
 //https://www.youtube.com/watch?v=QBwLJKbCIlo&ab_channel=MadewithFlutter
-
-class RestaurantNumberModel {
-  RestaurantNumberModel(this.type, this.number);
-
-  int type;
-  int number;
-}
 
 class OwnerRestaurantNumberPage extends StatefulWidget {
   @override
@@ -17,19 +13,17 @@ class OwnerRestaurantNumberPage extends StatefulWidget {
 }
 
 class _OwnerRestaurantNumberPageState extends State<OwnerRestaurantNumberPage> {
-//  final Function(int) onNumberSelected;
-//
-//  NumericPad({@required this.onNumberSelected});
-  int chooseType = 0;
+  RESTAURANT_NUMBER_TYPE _chooseType = RESTAURANT_NUMBER_TYPE.IN;
+  RESTAURANT_NUMBER_CARD_TYPE _cardType = RESTAURANT_NUMBER_CARD_TYPE.BOTH;
 
   String numberPadValue = "";
 
-  RestaurantNumberModel inRestaurantNumberModel = RestaurantNumberModel(0, 24);
-  RestaurantNumberModel outRestaurantNumberModel = RestaurantNumberModel(1, 53);
+  RestaurantNumberModel restaurantNumberModel = RestaurantNumberModel(
+      cardType: RESTAURANT_NUMBER_CARD_TYPE.BOTH, inNumber: 24, outNumber: 53);
 
   @override
   void initState() {
-    numberPadValue = inRestaurantNumberModel.number.toString();
+    numberPadValue = restaurantNumberModel.inNumber.toString();
     super.initState();
   }
 
@@ -38,6 +32,7 @@ class _OwnerRestaurantNumberPageState extends State<OwnerRestaurantNumberPage> {
     return Scaffold(
         appBar: AppBar(
           title: Text("候位號碼牌系統"),
+          actions: [IconButton(onPressed: () {}, icon: Icon(Icons.settings))],
         ),
         body: userInputArea());
   }
@@ -45,15 +40,19 @@ class _OwnerRestaurantNumberPageState extends State<OwnerRestaurantNumberPage> {
   Widget userInputArea() {
     return Column(
       children: [
-        Row(
-          children: [
-            cardTypeCard(inRestaurantNumberModel),
-            cardTypeCard(outRestaurantNumberModel)
-          ],
+        Visibility(
+          visible: _cardType == RESTAURANT_NUMBER_CARD_TYPE.BOTH,
+          child: Row(
+            children: [
+              chooseTypeCard(restaurantNumberModel, RESTAURANT_NUMBER_TYPE.IN),
+              chooseTypeCard(restaurantNumberModel, RESTAURANT_NUMBER_TYPE.OUT)
+            ],
+          ),
         ),
-        numberCard(chooseType == 0
-            ? inRestaurantNumberModel
-            : outRestaurantNumberModel),
+        SizedBox(
+          height: 6,
+        ),
+        numberCard(restaurantNumberModel, _chooseType),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
           child: Align(
@@ -85,12 +84,13 @@ class _OwnerRestaurantNumberPageState extends State<OwnerRestaurantNumberPage> {
     );
   }
 
-  Widget cardTypeCard(RestaurantNumberModel restaurantNumberModel) {
+  Widget chooseTypeCard(RestaurantNumberModel restaurantNumberModel,
+      RESTAURANT_NUMBER_TYPE restaurantNumberType) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
         child: Card(
-          color: chooseType == restaurantNumberModel.type
+          color: _chooseType == restaurantNumberType
               ? Colors.yellow[300]
               : Colors.white,
           shape:
@@ -103,8 +103,11 @@ class _OwnerRestaurantNumberPageState extends State<OwnerRestaurantNumberPage> {
               ),
               onTap: () {
                 setState(() {
-                  chooseType = restaurantNumberModel.type;
-                  numberPadValue = restaurantNumberModel.number.toString();
+                  _chooseType = restaurantNumberType;
+                  numberPadValue =
+                      restaurantNumberType == RESTAURANT_NUMBER_TYPE.IN
+                          ? restaurantNumberModel.inNumber.toString()
+                          : restaurantNumberModel.outNumber.toString();
                 });
               },
               child: Padding(
@@ -112,11 +115,15 @@ class _OwnerRestaurantNumberPageState extends State<OwnerRestaurantNumberPage> {
                     const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                 child: Column(
                   children: [
-                    Text(restaurantNumberModel.type == 0 ? "內用" : "外帶"),
+                    Text(restaurantNumberType == RESTAURANT_NUMBER_TYPE.IN
+                        ? "內用"
+                        : "外帶"),
                     SizedBox(
                       height: 5,
                     ),
-                    Text(restaurantNumberModel.number.toString())
+                    Text(restaurantNumberType == RESTAURANT_NUMBER_TYPE.IN
+                        ? restaurantNumberModel.inNumber.toString()
+                        : restaurantNumberModel.outNumber.toString())
                   ],
                 ),
               ),
@@ -127,9 +134,9 @@ class _OwnerRestaurantNumberPageState extends State<OwnerRestaurantNumberPage> {
     );
   }
 
-  Widget numberCard(RestaurantNumberModel restaurantNumberModel) {
+  Widget numberCard(RestaurantNumberModel restaurantNumberModel,
+      RESTAURANT_NUMBER_TYPE restaurantNumberType) {
     return Card(
-      color: Colors.yellow[300],
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
@@ -171,19 +178,26 @@ class _OwnerRestaurantNumberPageState extends State<OwnerRestaurantNumberPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    _cardType == RESTAURANT_NUMBER_CARD_TYPE.SINGLE
+                        ? SizedBox.shrink()
+                        : Expanded(
+                            child: Center(
+                              child: Text(
+                                restaurantNumberType ==
+                                        RESTAURANT_NUMBER_TYPE.IN
+                                    ? "內用"
+                                    : "外帶",
+                                style: TextStyle(
+                                    fontSize: 22, fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ),
                     Expanded(
                       child: Center(
                         child: Text(
-                          restaurantNumberModel.type == 0 ? "內用" : "外帶",
-                          style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          restaurantNumberModel.number.toString(),
+                          restaurantNumberType == RESTAURANT_NUMBER_TYPE.IN
+                              ? restaurantNumberModel.inNumber.toString()
+                              : restaurantNumberModel.outNumber.toString(),
                           style: TextStyle(
                               fontSize: 35, fontWeight: FontWeight.w600),
                         ),
@@ -305,10 +319,10 @@ class _OwnerRestaurantNumberPageState extends State<OwnerRestaurantNumberPage> {
         }
       } else if (value == 0) {
         // press send
-        if (chooseType == 0){
-          inRestaurantNumberModel.number = stringValueToInt(numberPadValue);
-        } else{
-          outRestaurantNumberModel.number = stringValueToInt(numberPadValue);
+        if (_chooseType == RESTAURANT_NUMBER_TYPE.IN) {
+          restaurantNumberModel.inNumber = stringValueToInt(numberPadValue);
+        } else {
+          restaurantNumberModel.outNumber = stringValueToInt(numberPadValue);
         }
         showToast("Send");
       }
