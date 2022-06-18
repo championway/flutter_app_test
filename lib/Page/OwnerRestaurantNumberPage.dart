@@ -14,7 +14,6 @@ class OwnerRestaurantNumberPage extends StatefulWidget {
 
 class _OwnerRestaurantNumberPageState extends State<OwnerRestaurantNumberPage> {
   RESTAURANT_NUMBER_TYPE _chooseType = RESTAURANT_NUMBER_TYPE.IN;
-  RESTAURANT_NUMBER_CARD_TYPE _cardType = RESTAURANT_NUMBER_CARD_TYPE.BOTH;
 
   String numberPadValue = "";
 
@@ -41,7 +40,7 @@ class _OwnerRestaurantNumberPageState extends State<OwnerRestaurantNumberPage> {
     return Column(
       children: [
         Visibility(
-          visible: _cardType == RESTAURANT_NUMBER_CARD_TYPE.BOTH,
+          visible: restaurantNumberModel.cardType == RESTAURANT_NUMBER_CARD_TYPE.BOTH,
           child: Row(
             children: [
               chooseTypeCard(restaurantNumberModel, RESTAURANT_NUMBER_TYPE.IN),
@@ -178,7 +177,7 @@ class _OwnerRestaurantNumberPageState extends State<OwnerRestaurantNumberPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    _cardType == RESTAURANT_NUMBER_CARD_TYPE.SINGLE
+                    restaurantNumberModel.cardType == RESTAURANT_NUMBER_CARD_TYPE.SINGLE
                         ? SizedBox.shrink()
                         : Expanded(
                             child: Center(

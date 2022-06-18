@@ -9,7 +9,7 @@ class RestaurantNumberPage extends StatefulWidget {
 }
 
 class _RestaurantNumberPageState extends State<RestaurantNumberPage> {
-  RESTAURANT_NUMBER_CARD_TYPE cardType = RESTAURANT_NUMBER_CARD_TYPE.SINGLE;
+//  RESTAURANT_NUMBER_CARD_TYPE cardType = RESTAURANT_NUMBER_CARD_TYPE.SINGLE;
 
   RestaurantNumberModel restaurantNumberModel = RestaurantNumberModel(
       cardType: RESTAURANT_NUMBER_CARD_TYPE.BOTH,
@@ -42,7 +42,7 @@ class _RestaurantNumberPageState extends State<RestaurantNumberPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-        child: RestaurantNumberWidget(cardType, restaurantNumberModel),
+        child: RestaurantNumberWidget(restaurantNumberModel),
       ),
     );
   }

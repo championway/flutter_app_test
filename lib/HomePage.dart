@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_test/GoogleMapParsingPage.dart';
 import 'package:flutter_app_test/Page/AddPostPage.dart';
 import 'package:flutter_app_test/Page/BusinessTimePicker.dart';
+import 'package:flutter_app_test/Page/ChooseRestaurantNumberCardTypePage.dart';
 import 'package:flutter_app_test/Page/CouponWidget.dart';
 import 'package:flutter_app_test/Page/DateTimePickerPage.dart';
 import 'package:flutter_app_test/Page/OwnerRestaurantNumberPage.dart';
@@ -45,8 +46,8 @@ class _HomePageState extends State<HomePage> {
           _listTile(Icons.qr_code_scanner, "QRScanner", () {pushPage(context, QRScanPage());}),
           _listTile(Icons.qr_code, "QRCode", () {pushPage(context, QRCodePage());}),
           _listTile(Icons.date_range, "Picker", () {pushPage(context, DateTimePickerPage());}),
-          _listTile(Icons.post_add_outlined, "null", () {
-            pushPage(context, AddPostPage());
+          _listTile(Icons.post_add_outlined, "Choose", () {
+            pushPage(context, ChooseRestaurantNumberCardTypePage());
           }),
           _listTile(Icons.confirmation_number, "Number", () {
             pushPage(context, RestaurantNumberPage());

@@ -4,9 +4,8 @@ import 'package:flutter_app_test/Util/Util.dart';
 import 'package:flutter_app_test/model/RestaurantNumberModel.dart';
 
 class RestaurantNumberWidget extends StatelessWidget {
-  RestaurantNumberWidget(this.cardType, this.restaurantNumberModel);
+  RestaurantNumberWidget(this.restaurantNumberModel);
 
-  final RESTAURANT_NUMBER_CARD_TYPE cardType;
   final RestaurantNumberModel restaurantNumberModel;
 
   @override
@@ -55,7 +54,7 @@ class RestaurantNumberWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    cardType == RESTAURANT_NUMBER_CARD_TYPE.BOTH
+                    restaurantNumberModel.cardType == RESTAURANT_NUMBER_CARD_TYPE.BOTH
                         ? Expanded(
                       child: Center(
                         child: Text(
@@ -80,7 +79,7 @@ class RestaurantNumberWidget extends StatelessWidget {
                 ),
               ),
               Visibility(
-                visible: cardType == RESTAURANT_NUMBER_CARD_TYPE.BOTH,
+                visible: restaurantNumberModel.cardType == RESTAURANT_NUMBER_CARD_TYPE.BOTH,
                 child: Column(
                   children: [
                     Padding(
