@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/GoogleMapParsingPage.dart';
-import 'package:flutter_app_test/Page/AddPostPage.dart';
-import 'package:flutter_app_test/Page/BusinessTimePicker.dart';
 import 'package:flutter_app_test/Page/ChooseRestaurantNumberCardTypePage.dart';
 import 'package:flutter_app_test/Page/CouponWidget.dart';
 import 'package:flutter_app_test/Page/DateTimePickerPage.dart';
+import 'package:flutter_app_test/Page/MenuPage.dart';
 import 'package:flutter_app_test/Page/OwnerRestaurantNumberPage.dart';
 import 'package:flutter_app_test/Page/QRCodePage.dart';
 import 'package:flutter_app_test/Page/QRScanPage.dart';
@@ -34,18 +33,26 @@ class _HomePageState extends State<HomePage> {
     return Drawer(
       child: ListView(
         children: <Widget>[
-          _listTile(Icons.api, "Basic API", () => {
-          }),
+          _listTile(Icons.api, "Basic API", () => {}),
           _listTile(Icons.report_outlined, "Report", () => {}),
-          _listTile(Icons.restaurant, "Restaurant", () => {}),
+          _listTile(Icons.restaurant, "Restaurant",
+              () => {pushPage(context, MenuPage())}),
           _listTile(Icons.search, "null", () {}),
           _listTile(Icons.add_location, "Add Restaurant", () {
             pushPage(context, GoogleMapParsingPage());
           }),
-          _listTile(Icons.money, "Coupon", () {pushPage(context, CouponWidget());}),
-          _listTile(Icons.qr_code_scanner, "QRScanner", () {pushPage(context, QRScanPage());}),
-          _listTile(Icons.qr_code, "QRCode", () {pushPage(context, QRCodePage());}),
-          _listTile(Icons.date_range, "Picker", () {pushPage(context, DateTimePickerPage());}),
+          _listTile(Icons.money, "Coupon", () {
+            pushPage(context, CouponWidget());
+          }),
+          _listTile(Icons.qr_code_scanner, "QRScanner", () {
+            pushPage(context, QRScanPage());
+          }),
+          _listTile(Icons.qr_code, "QRCode", () {
+            pushPage(context, QRCodePage());
+          }),
+          _listTile(Icons.date_range, "Picker", () {
+            pushPage(context, DateTimePickerPage());
+          }),
           _listTile(Icons.post_add_outlined, "Choose", () {
             pushPage(context, ChooseRestaurantNumberCardTypePage());
           }),
@@ -95,12 +102,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     String? a;
     var f;
-    f  = [2, 3];
+    f = [2, 3];
     print(f.length);
 //    a = "ddd";
     return Scaffold(
@@ -122,10 +128,10 @@ class _HomePageState extends State<HomePage> {
         leading: IconButton(
           icon: Icon(Icons.menu),
           onPressed: () {
-            if(_scaffoldKey.currentState!.isDrawerOpen){
+            if (_scaffoldKey.currentState!.isDrawerOpen) {
               //if drawer is open, then close the drawer
               Navigator.pop(context);
-            }else{
+            } else {
               _scaffoldKey.currentState!.openDrawer();
               //if drawer is closed then open the drawer.
             }
