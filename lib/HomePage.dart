@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
         children: <Widget>[
           _listTile(Icons.api, "Basic API", () => {}),
           _listTile(Icons.report_outlined, "Report", () => {}),
-          _listTile(Icons.restaurant, "Restaurant",
+          _listTile(Icons.restaurant, "Menu",
               () => {pushPage(context, MenuPage())}),
           _listTile(Icons.search, "null", () {}),
           _listTile(Icons.add_location, "Add Restaurant", () {

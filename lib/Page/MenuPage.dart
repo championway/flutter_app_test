@@ -28,7 +28,7 @@ class _MenuPageState extends State<MenuPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Restaurant"),
+        title: Text("Menu"),
       ),
       body: AnimatedBuilder(
         animation: _bloc,
@@ -57,7 +57,7 @@ class _MenuPageState extends State<MenuPage>
                       } else {
                         return _MenuFoodItemWidget(item.foodItem!);
                       }
-                    }))
+                    })),
           ],
         ),
       ),
@@ -181,6 +181,7 @@ class MenuBLoc with ChangeNotifier {
   List<MenuItem> items = [];
   late TabController tabController;
   ScrollController scrollController = ScrollController();
+  bool _listen = true;
 
   void init(TickerProvider ticker) {
     tabController = TabController(length: menuCategories.length, vsync: ticker);
@@ -218,28 +219,41 @@ class MenuBLoc with ChangeNotifier {
   }
 
   void _onScrollListener() {
-    for (int i = 0; i < tabs.length; i++) {
-      final tab = tabs[i];
-      if (scrollController.offset >= tab.offsetFrom &&
-          scrollController.offset <= tab.offsetTo &&
-          !tab.selected) {
-//        onCategorySelected(i);
-        break;
+    if (_listen) {
+      for (int i = 0; i < tabs.length; i++) {
+        final tab = tabs[i];
+        if (scrollController.offset >= tab.offsetFrom &&
+            scrollController.offset <= tab.offsetTo &&
+            !tab.selected) {
+          onCategorySelected(i, animationRequired: false);
+          tabController.animateTo(i);
+//          print(
+//              "$i, ${scrollController.offset >= tab.offsetFrom}, ${scrollController.offset <= tab.offsetTo}, ${tab.selected}, break");
+          break;
+        }
+        else if (scrollController.position.pixels == scrollController.position.maxScrollExtent){
+          onCategorySelected(tabs.length - 1, animationRequired: false);
+          tabController.animateTo(tabs.length - 1);
+          print("Bottom");
+        }
       }
     }
   }
 
-  void onCategorySelected(int index) {
+  void onCategorySelected(int index, {bool animationRequired = true}) async {
     final selected = tabs[index];
     for (int i = 0; i < tabs.length; i++) {
-      final condition = (selected.category.name == tabs[i].category.name);
+      final condition = selected.category.name == tabs[i].category.name;
       tabs[i] = tabs[i].copyWith(condition);
     }
     notifyListeners();
-    print(index);
-    print(selected.offsetFrom);
-    scrollController.animateTo(selected.offsetFrom,
-        duration: const Duration(milliseconds: 500), curve: Curves.bounceOut);
+
+    if (animationRequired) {
+      _listen = false;
+      await scrollController.animateTo(selected.offsetFrom,
+          duration: const Duration(milliseconds: 500), curve: Curves.linear);
+      _listen = true;
+    }
   }
 
   @override
