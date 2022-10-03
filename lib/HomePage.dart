@@ -5,6 +5,7 @@ import 'package:flutter_app_test/Page/CouponWidget.dart';
 import 'package:flutter_app_test/Page/DateTimePickerPage.dart';
 import 'package:flutter_app_test/Page/MenuPage.dart';
 import 'package:flutter_app_test/Page/OwnerRestaurantNumberPage.dart';
+import 'package:flutter_app_test/Page/PointCardWidgetPage.dart';
 import 'package:flutter_app_test/Page/QRCodePage.dart';
 import 'package:flutter_app_test/Page/QRScanPage.dart';
 import 'package:flutter_app_test/Page/RestaurantNumberPage.dart';
@@ -43,6 +44,9 @@ class _HomePageState extends State<HomePage> {
           }),
           _listTile(Icons.money, "Coupon", () {
             pushPage(context, CouponWidget());
+          }),
+          _listTile(Icons.money, "PointCard", () {
+            pushPage(context, PointCardWidgetPage());
           }),
           _listTile(Icons.qr_code_scanner, "QRScanner", () {
             pushPage(context, QRScanPage());

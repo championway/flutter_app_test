@@ -144,7 +144,7 @@ class _MenuFoodItemWidget extends StatelessWidget {
                       const SizedBox(
                         height: 5,
                       ),
-                      Text("好吃"),
+                      Text("123"),
                       const SizedBox(
                         height: 5,
                       ),
