@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/GoogleMapParsingPage.dart';
 import 'package:flutter_app_test/Page/ChooseRestaurantNumberCardTypePage.dart';
+import 'package:flutter_app_test/Page/CountdownTimerPage.dart';
 import 'package:flutter_app_test/Page/CouponWidget.dart';
 import 'package:flutter_app_test/Page/DateTimePickerPage.dart';
 import 'package:flutter_app_test/Page/MenuPage.dart';
@@ -65,6 +66,9 @@ class _HomePageState extends State<HomePage> {
           }),
           _listTile(Icons.confirmation_number_outlined, "Owner Number", () {
             pushPage(context, OwnerRestaurantNumberPage());
+          }),
+          _listTile(Icons.timer, "Countdown Time", () {
+            pushPage(context, CountdownTimerPage());
           }),
         ],
       ),
