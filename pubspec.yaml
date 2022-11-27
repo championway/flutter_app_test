@@ -37,6 +37,8 @@ dependencies:
   # QR code
   qr_flutter: ^4.0.0
   qr_code_scanner: ^0.4.0
+  path_provider: ^2.0.4
+  image_gallery_saver: ^1.7.1
 
 dev_dependencies:
   flutter_test:

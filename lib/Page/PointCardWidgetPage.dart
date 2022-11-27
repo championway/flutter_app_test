@@ -2,7 +2,27 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/Util/Util.dart';
 
-class PointCardWidgetPage extends StatelessWidget {
+class PointCardWidgetPage extends StatefulWidget {
+  @override
+  _PointCardWidgetPageState createState() => _PointCardWidgetPageState();
+}
+
+class _PointCardWidgetPageState extends State<PointCardWidgetPage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  int _tabIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = new TabController(vsync: this, length: 2);
+    _tabController.addListener(() {
+      setState(() {
+        _tabIndex = _tabController.index;
+      });
+    });
+  }
+
   Widget pointCardWidget() {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -68,17 +88,52 @@ class PointCardWidgetPage extends StatelessWidget {
     );
   }
 
+  Widget testCard() {
+    return Padding(
+      padding: const EdgeInsets.all(1.0),
+      child: Container(
+        child: SizedBox(
+          height: 50,
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5), color: Colors.blue),
+            child: Center(
+              child: Text("T"),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget pointSection() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 3.0, vertical: 15.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
       child: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-//          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               "點數: ${5}",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+            ),
+            InkWell(
+              onTap: (){
+                showToast("詳細資訊");
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 3.0),
+                child: Container(
+                  child: Row(
+                    children: [
+                      Text("詳細資訊", style: TextStyle(fontSize: 13),),
+                      SizedBox(width: 5,),
+                      Icon(Icons.arrow_forward_ios, size: 15,)
+                    ],
+                  ),
+                ),
+              ),
             )
           ],
         ),
@@ -98,6 +153,7 @@ class PointCardWidgetPage extends StatelessWidget {
           children: [
             pointSection(),
             TabBar(
+              controller: _tabController,
               tabs: [
                 Tab(
                   child: Text(
@@ -115,6 +171,7 @@ class PointCardWidgetPage extends StatelessWidget {
             ),
             Expanded(
               child: TabBarView(
+                  controller: _tabController,
                   physics: NeverScrollableScrollPhysics(),
                   children: [
                     Container(
@@ -122,13 +179,29 @@ class PointCardWidgetPage extends StatelessWidget {
                         child: Text("1"),
                       ),
                     ),
-                    Container(
-                      child: Center(
-                        child: Text("2"),
+                    SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          testCard(),
+                          testCard(),
+                          testCard(),
+                          testCard(),
+                          testCard(),
+                          testCard(),
+                          testCard(),
+                          testCard(),
+                          testCard(),
+                          testCard(),
+                          testCard(),
+                          testCard(),
+                        ],
                       ),
-                    ),
+                    )
                   ]),
             ),
+            Visibility(
+                visible: _tabIndex == 0,
+                child: pointSection()),
           ],
         ),
       ),
