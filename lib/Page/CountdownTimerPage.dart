@@ -8,10 +8,25 @@ class CountdownTimerPage extends StatefulWidget {
 }
 
 class _CountdownTimerPageState extends State<CountdownTimerPage> {
-  static const maxSeconds = 60;
+  static const maxSeconds = 5;
   int seconds = maxSeconds;
+  int showMinute = 0;
+  int showSecond = 0;
+
+  DateTime currentTime = DateTime.now();
 
   Timer? timer;
+
+  @override
+  void initState() {
+    startTimer();
+    super.initState();
+  }
+
+  void setUITime(){
+    showMinute = seconds ~/ 60;
+    showSecond = seconds - showMinute*60;
+  }
 
   @override
   void dispose() {
@@ -22,11 +37,22 @@ class _CountdownTimerPageState extends State<CountdownTimerPage> {
 
   void startTimer(){
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (seconds > 0) {
+      seconds = maxSeconds - DateTime.now().difference(currentTime).inSeconds;
+      print(seconds);
+      if (seconds >= 0) {
         setState(() {
-          seconds--;
+          setUITime();
         });
       }
+      else{
+        stopTimer();
+      }
+
+//      if (seconds > 0) {
+//        setState(() {
+//          seconds--;
+//        });
+//      }
     });
   }
 
@@ -53,8 +79,9 @@ class _CountdownTimerPageState extends State<CountdownTimerPage> {
             height: 80,
           ),
           buildStartButtons(),
-          buildPauseButtons(),
-          buildResetButtons()
+//          buildPauseButtons(),
+//          buildResetButtons(),
+          buildGetTimeButtons()
         ],
       )),
     );
@@ -87,11 +114,21 @@ class _CountdownTimerPageState extends State<CountdownTimerPage> {
     );
   }
 
+  Widget buildGetTimeButtons() {
+    return ElevatedButton(
+      onPressed: () {
+        currentTime = DateTime.now();
+        print(currentTime);
+      },
+      child: Text("Get Time"),
+    );
+  }
+
   Widget buildTime() {
     return Text(
-      "$seconds",
+      "${showMinute.toString().padLeft(2, "0")} : ${showSecond.toString().padLeft(2, "0")}",
       style: TextStyle(
-          fontWeight: FontWeight.bold, color: Colors.black, fontSize: 80),
+          fontWeight: FontWeight.bold, color: Colors.black, fontSize: 60),
     );
   }
 
@@ -103,7 +140,7 @@ class _CountdownTimerPageState extends State<CountdownTimerPage> {
         fit: StackFit.expand,
         children: [
           CircularProgressIndicator(
-            value: 1 - seconds / maxSeconds,
+            value: seconds / maxSeconds,
             valueColor: AlwaysStoppedAnimation(Colors.greenAccent),
             strokeWidth: 12,
             backgroundColor: Colors.grey,
