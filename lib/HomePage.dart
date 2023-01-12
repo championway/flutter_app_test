@@ -1,9 +1,11 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/GoogleMapParsingPage.dart';
 import 'package:flutter_app_test/Page/ChooseRestaurantNumberCardTypePage.dart';
 import 'package:flutter_app_test/Page/CountdownTimerPage.dart';
 import 'package:flutter_app_test/Page/CouponWidget.dart';
 import 'package:flutter_app_test/Page/DateTimePickerPage.dart';
+import 'package:flutter_app_test/Page/DeepLinkPage.dart';
 import 'package:flutter_app_test/Page/MenuPage.dart';
 import 'package:flutter_app_test/Page/OwnerRestaurantNumberPage.dart';
 import 'package:flutter_app_test/Page/PointCardWidgetPage.dart';
@@ -20,11 +22,48 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  String _deepLink = "0";
 
   @override
   void initState() {
     super.initState();
   }
+
+//  Future<void> _createDynamicLink(bool short) async {
+//    setState(() {
+//      _isCreatingLink = true;
+//    });
+//
+//    final DynamicLinkParameters parameters = DynamicLinkParameters(
+//      uriPrefix: 'https://flutterfiretests.page.link',
+//      longDynamicLink: Uri.parse(
+//        'https://flutterfiretests.page.link?efr=0&ibi=io.flutter.plugins.firebase.dynamiclinksexample&apn=io.flutter.plugins.firebase.dynamiclinksexample&imv=0&amv=0&link=https%3A%2F%2Fexample%2Fhelloworld&ofl=https://ofl-example.com',
+//      ),
+//      link: Uri.parse(DynamicLink),
+//      androidParameters: const AndroidParameters(
+//        packageName: 'io.flutter.plugins.firebase.dynamiclinksexample',
+//        minimumVersion: 0,
+//      ),
+//      iosParameters: const IOSParameters(
+//        bundleId: 'io.flutter.plugins.firebase.dynamiclinksexample',
+//        minimumVersion: '0',
+//      ),
+//    );
+//
+//    Uri url;
+//    if (short) {
+//      final ShortDynamicLink shortLink =
+//      await dynamicLinks.buildShortLink(parameters);
+//      url = shortLink.shortUrl;
+//    } else {
+//      url = await dynamicLinks.buildLink(parameters);
+//    }
+//
+//    setState(() {
+//      _linkMessage = url.toString();
+//      _isCreatingLink = false;
+//    });
+//  }
 
   @override
   void dispose() {
@@ -37,9 +76,11 @@ class _HomePageState extends State<HomePage> {
         children: <Widget>[
           _listTile(Icons.api, "Basic API", () => {}),
           _listTile(Icons.report_outlined, "Report", () => {}),
-          _listTile(Icons.restaurant, "Menu",
-              () => {pushPage(context, MenuPage())}),
-          _listTile(Icons.search, "null", () {}),
+          _listTile(
+              Icons.restaurant, "Menu", () => {pushPage(context, MenuPage())}),
+          _listTile(Icons.link, "Deep Link", () {
+            pushPage(context, DeepLinkPage());
+          }),
           _listTile(Icons.add_location, "Add Restaurant", () {
             pushPage(context, GoogleMapParsingPage());
           }),
@@ -158,6 +199,7 @@ class _HomePageState extends State<HomePage> {
                 Text(AppLocalizations.of(context)!.hello),
                 Text(AppLocalizations.of(context)!.nice),
                 Text(AppLocalizations.of(context)!.nice),
+                Text(_deepLink),
               ],
             ),
           ),
