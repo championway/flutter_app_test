@@ -12,6 +12,7 @@ import 'package:flutter_app_test/Page/PointCardWidgetPage.dart';
 import 'package:flutter_app_test/Page/QRCodePage.dart';
 import 'package:flutter_app_test/Page/QRScanPage.dart';
 import 'package:flutter_app_test/Page/RestaurantNumberPage.dart';
+import 'package:flutter_app_test/Page/ShowPage.dart';
 import 'package:flutter_app_test/Util/Util.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -23,47 +24,53 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String _deepLink = "0";
+  PendingDynamicLinkData? _dynamicLinks;
 
   @override
   void initState() {
+    this.initDynamicLinks(context);
     super.initState();
   }
 
-//  Future<void> _createDynamicLink(bool short) async {
-//    setState(() {
-//      _isCreatingLink = true;
-//    });
-//
-//    final DynamicLinkParameters parameters = DynamicLinkParameters(
-//      uriPrefix: 'https://flutterfiretests.page.link',
-//      longDynamicLink: Uri.parse(
-//        'https://flutterfiretests.page.link?efr=0&ibi=io.flutter.plugins.firebase.dynamiclinksexample&apn=io.flutter.plugins.firebase.dynamiclinksexample&imv=0&amv=0&link=https%3A%2F%2Fexample%2Fhelloworld&ofl=https://ofl-example.com',
-//      ),
-//      link: Uri.parse(DynamicLink),
-//      androidParameters: const AndroidParameters(
-//        packageName: 'io.flutter.plugins.firebase.dynamiclinksexample',
-//        minimumVersion: 0,
-//      ),
-//      iosParameters: const IOSParameters(
-//        bundleId: 'io.flutter.plugins.firebase.dynamiclinksexample',
-//        minimumVersion: '0',
-//      ),
-//    );
-//
-//    Uri url;
-//    if (short) {
-//      final ShortDynamicLink shortLink =
-//      await dynamicLinks.buildShortLink(parameters);
-//      url = shortLink.shortUrl;
-//    } else {
-//      url = await dynamicLinks.buildLink(parameters);
-//    }
-//
-//    setState(() {
-//      _linkMessage = url.toString();
-//      _isCreatingLink = false;
-//    });
-//  }
+
+  initDynamicLinks(BuildContext context) async {
+    print("Homepage: get deep link");
+//    await Future.delayed(Duration(seconds: 1));
+    var data = await FirebaseDynamicLinks.instance.getInitialLink();
+    Uri? deepLink = data?.link;
+    if (deepLink != null) {
+      final queryParams = deepLink.queryParameters;
+      showToast("Homepage init");
+      if (queryParams.length > 0) {
+        String data = queryParams["id"]??"null data";
+        pushPage(context, ShowPage(showText: "Init: " + data,));
+      }
+    }
+    FirebaseDynamicLinks.instance.onLink(
+        onSuccess: (PendingDynamicLinkData? dynamicLinks) async {
+          setState(() {
+            _dynamicLinks = dynamicLinks;
+          });
+          print("Homepage: onSuccess");
+          showToast("Homepage: DeepLink");
+          showToast(dynamicLinks!.link.toString());
+          final Uri? deepLink = dynamicLinks.link;
+
+          if (deepLink != null) {
+            handleDeepLink(deepLink);
+          }
+        }, onError: (OnLinkErrorException e) async {
+      print("Homepage: onError");
+      showToast(e.toString());
+    });
+  }
+
+  void handleDeepLink(Uri uri) {
+    print(uri);
+    showToast(uri.toString());
+    String data = uri.queryParameters["id"]??"null data";
+    pushPage(context, ShowPage(showText: "handle: " + data,));
+  }
 
   @override
   void dispose() {
@@ -80,6 +87,9 @@ class _HomePageState extends State<HomePage> {
               Icons.restaurant, "Menu", () => {pushPage(context, MenuPage())}),
           _listTile(Icons.link, "Deep Link", () {
             pushPage(context, DeepLinkPage());
+          }),
+          _listTile(Icons.text_fields, "Show Page", () {
+            pushPage(context, ShowPage());
           }),
           _listTile(Icons.add_location, "Add Restaurant", () {
             pushPage(context, GoogleMapParsingPage());
@@ -153,6 +163,15 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_dynamicLinks!=null) {
+      print("==== Homepage ===");
+      print(_dynamicLinks!.link); // https://fluttercpw.page.link?type=ABC&id=asdf
+      print(_dynamicLinks!.link.path); // type=ABC&id=asdf
+      print(_dynamicLinks!.link.query); // {type: ABC, id: asdf}
+      print(_dynamicLinks!.link.queryParameters); // (ABC, asdf)
+      print(_dynamicLinks!.link.queryParameters.values); // null
+      print("*******");
+    }
     String? a;
     var f;
     f = [2, 3];

@@ -34,21 +34,16 @@ class _MyAppState extends State<MyApp> {
           setState(() {
             _dynamicLinks = dynamicLinks;
           });
-          print("onSuccess");
-          showToast("DeepLink1");
+          print("Main: onSuccess");
+          showToast("Main: DeepLink");
           showToast(dynamicLinks!.link.toString());
-          showToast(dynamicLinks.link.path.toString());
-          showToast(dynamicLinks.link.queryParameters.values.toString());
-          showToast(dynamicLinks.link.queryParameters.values.first.toString());
-          print(dynamicLinks.link.queryParameters.values.toString());
-          showToast("onSuccess");
           final Uri? deepLink = dynamicLinks.link;
 
           if (deepLink != null) {
             handleDeepLink(deepLink);
           }
         }, onError: (OnLinkErrorException e) async {
-      print("onError");
+      print("Main: onError");
       showToast(e.toString());
     });
 //    dynamicLinks.onLink.listen((dynamicLinkData) {
@@ -72,9 +67,13 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     if (_dynamicLinks!=null) {
-      print(_dynamicLinks!.link);
-      print(_dynamicLinks!.link.path);
-      print(_dynamicLinks!.link.queryParameters.values);
+      print("==== Main ===");
+      print(_dynamicLinks!.link); // https://fluttercpw.page.link?type=ABC&id=asdf
+      print(_dynamicLinks!.link.path); // type=ABC&id=asdf
+      print(_dynamicLinks!.link.query); // {type: ABC, id: asdf}
+      print(_dynamicLinks!.link.queryParameters); // (ABC, asdf)
+      print(_dynamicLinks!.link.queryParameters.values); // null
+      print("*******");
     }
 
     return MaterialApp(

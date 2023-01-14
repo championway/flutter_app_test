@@ -15,10 +15,10 @@ class _DeepLinkPageState extends State<DeepLinkPage> {
 
   Future<void> _createDynamicLink(bool short) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
-      uriPrefix: 'https://fluttercpw.page.link',
-      link: Uri.parse('https://fluttercpw.page.link + "/abcefg"'),
+      uriPrefix: 'https://infood.page.link',
+      link: Uri.parse('https://infood.page.link?abc=efg&123=456'),
       androidParameters: AndroidParameters(
-        packageName: 'com.example.flutter_app_test',
+        packageName: 'com.infood.infood',
         minimumVersion: 0,
       ),
     );
