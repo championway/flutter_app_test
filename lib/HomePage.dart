@@ -8,6 +8,7 @@ import 'package:flutter_app_test/Page/DateTimePickerPage.dart';
 import 'package:flutter_app_test/Page/DeepLinkPage.dart';
 import 'package:flutter_app_test/Page/MenuPage.dart';
 import 'package:flutter_app_test/Page/OwnerRestaurantNumberPage.dart';
+import 'package:flutter_app_test/Page/PhotoEditorPage.dart';
 import 'package:flutter_app_test/Page/PointCardWidgetPage.dart';
 import 'package:flutter_app_test/Page/QRCodePage.dart';
 import 'package:flutter_app_test/Page/QRScanPage.dart';
@@ -90,6 +91,9 @@ class _HomePageState extends State<HomePage> {
           }),
           _listTile(Icons.text_fields, "Show Page", () {
             pushPage(context, ShowPage());
+          }),
+          _listTile(Icons.text_fields, "Photo Editor", () {
+            pushPage(context, PhotoEditorPage());
           }),
           _listTile(Icons.add_location, "Add Restaurant", () {
             pushPage(context, GoogleMapParsingPage());
