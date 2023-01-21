@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image/image.dart' as IMG;
 
 class PhotoEditorPage extends StatefulWidget {
   @override
@@ -12,6 +13,8 @@ class PhotoEditorPage extends StatefulWidget {
 
 class _PhotoEditorPageState extends State<PhotoEditorPage> {
   File? _image;
+  File? _showImage;
+  IMG.Image? _img;
 
   Future _pickImage(ImageSource source) async {
     try {
@@ -20,11 +23,26 @@ class _PhotoEditorPageState extends State<PhotoEditorPage> {
       File? img = File(image.path);
       setState(() {
         _image = img;
+        _showImage = _image;
 //        Navigator.of(context).pop();
       });
     } on PlatformException catch (e) {
       print(e);
 //      Navigator.of(context).pop();
+    }
+  }
+
+  void editImage() async{
+    if (_image == null) return;
+    IMG.Image? img = IMG.decodeImage(_image!.readAsBytesSync());
+    if (img != null) {
+      print(img.height);
+      print(img.width);
+      img = IMG.copyResize(img, width: 500, height: 500);
+      File file = File.fromRawPath(img.getBytes());
+      setState(() {
+        _showImage = file;
+      });
     }
   }
 
@@ -91,10 +109,15 @@ class _PhotoEditorPageState extends State<PhotoEditorPage> {
                   if (_image != null) {
                     _cropImage(imageFile: _image!);
                   }
-                }, icon: Icon(Icons.crop))
+                }, icon: Icon(Icons.crop)),
+                IconButton(onPressed: (){
+                  if (_image != null) {
+                    editImage();
+                  }
+                }, icon: Icon(Icons.edit))
               ],
             ),
-            _image != null ? Image.file(_image!) : SizedBox.shrink()
+            _showImage != null ? Image.file(_showImage!) : SizedBox.shrink()
           ],
         ),
       ),
