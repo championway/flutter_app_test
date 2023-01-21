@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app_test/Util/Util.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as IMG;
@@ -15,6 +17,7 @@ class _PhotoEditorPageState extends State<PhotoEditorPage> {
   File? _image;
   File? _showImage;
   IMG.Image? _img;
+  List<int>? _listInt;
 
   Future _pickImage(ImageSource source) async {
     try {
@@ -32,16 +35,26 @@ class _PhotoEditorPageState extends State<PhotoEditorPage> {
     }
   }
 
-  void editImage() async{
-    if (_image == null) return;
-    IMG.Image? img = IMG.decodeImage(_image!.readAsBytesSync());
+  void editImage() async {
+    if (_showImage == null) return;
+    IMG.Image? img = IMG.decodeImage(_showImage!.readAsBytesSync());
     if (img != null) {
-      print(img.height);
-      print(img.width);
-      img = IMG.copyResize(img, width: 500, height: 500);
-      File file = File.fromRawPath(img.getBytes());
+      showToast("Edit");
+//      print(img.height);
+//      print(img.width);
+//      IMG.Image? thumbnail = IMG.copyResize(img, width: 120);
+      IMG.Image thumbnail = IMG.copyResize(img, width: 150, height: 100);
+//      print(thumbnail.height);
+//      print(thumbnail.width);
+//      print("======");
+//      File('thumbnail-test.png')
+//        ..writeAsBytesSync(IMG.encodePng(thumbnail));
+//      File file = File.fromRawPath(Uint8List.fromList(IMG.encodePng(img)));
       setState(() {
-        _showImage = file;
+        _listInt = IMG.encodePng(thumbnail);
+        _img = img;
+//        _showImage = file;
+        showToast("Done");
       });
     }
   }
@@ -89,35 +102,48 @@ class _PhotoEditorPageState extends State<PhotoEditorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Photo Editor"),),
+      appBar: AppBar(
+        title: Text("Photo Editor"),
+      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){
-        },
+        onPressed: () {},
       ),
       body: Center(
         child: Column(
           children: [
             Row(
               children: [
-                IconButton(onPressed: (){
-                  _pickImage(ImageSource.camera);
-                }, icon: Icon(Icons.camera_alt_outlined)),
-                IconButton(onPressed: (){
-                  _pickImage(ImageSource.gallery);
-                }, icon: Icon(Icons.photo)),
-                IconButton(onPressed: (){
-                  if (_image != null) {
-                    _cropImage(imageFile: _image!);
-                  }
-                }, icon: Icon(Icons.crop)),
-                IconButton(onPressed: (){
-                  if (_image != null) {
-                    editImage();
-                  }
-                }, icon: Icon(Icons.edit))
+                IconButton(
+                    onPressed: () {
+                      _pickImage(ImageSource.camera);
+                    },
+                    icon: Icon(Icons.camera_alt_outlined)),
+                IconButton(
+                    onPressed: () {
+                      _pickImage(ImageSource.gallery);
+                    },
+                    icon: Icon(Icons.photo)),
+                IconButton(
+                    onPressed: () {
+                      if (_image != null) {
+                        _cropImage(imageFile: _image!);
+                      }
+                    },
+                    icon: Icon(Icons.crop)),
+                IconButton(
+                    onPressed: () {
+                      if (_image != null) {
+                        editImage();
+                      }
+                    },
+                    icon: Icon(Icons.edit))
               ],
             ),
-            _showImage != null ? Image.file(_showImage!) : SizedBox.shrink()
+            _listInt != null
+                ? Image.memory(Uint8List.fromList(_listInt!))
+                : (_showImage != null
+                    ? Image.file(_showImage!)
+                    : SizedBox.shrink()),
           ],
         ),
       ),
