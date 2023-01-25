@@ -35,6 +35,16 @@ class _PhotoEditorPageState extends State<PhotoEditorPage> {
     }
   }
 
+  IMG.Image? fileToImage(File? file){
+    if (file == null) return null;
+    return IMG.decodeImage(file.readAsBytesSync());
+  }
+
+  Uint8List? intListToUInt8List(List<int>? list){
+    if (list == null) return null;
+    Uint8List.fromList(list);
+  }
+
   void editImage() async {
     if (_showImage == null) return;
     IMG.Image? img = IMG.decodeImage(_showImage!.readAsBytesSync());
@@ -61,7 +71,7 @@ class _PhotoEditorPageState extends State<PhotoEditorPage> {
 
   Future<File?> _cropImage({required File imageFile}) async {
     File? croppedFile = await ImageCropper().cropImage(
-      sourcePath: imageFile.path,
+        sourcePath: imageFile.path, compressFormat: ImageCompressFormat.jpg
 //        aspectRatioPresets: Platform.isAndroid
 //            ? [
 //          CropAspectRatioPreset.square,
@@ -89,14 +99,25 @@ class _PhotoEditorPageState extends State<PhotoEditorPage> {
 //      iosUiSettings: IOSUiSettings(
 //        title: 'Cropper',
 //      ),
-    );
+        );
     if (croppedFile != null) {
-      return File(croppedFile.path);
+//      return File(croppedFile.path);
 //      imageFile = croppedFile;
-//      setState(() {
-//        _image = imageFile;
-//      });
+      showToast("Cropped");
+      setState(() {
+        _showImage = croppedFile;
+      });
     }
+  }
+
+  _cropImageWithSize(){
+    if (_showImage == null) return;
+    IMG.Image? img = IMG.decodeImage(_showImage!.readAsBytesSync());
+    IMG.Image cropImg =  IMG.copyCrop(img!, 5, 10, 50, 80);
+    setState(() {
+      _listInt = IMG.encodePng(cropImg);
+    });
+
   }
 
   @override
@@ -136,7 +157,12 @@ class _PhotoEditorPageState extends State<PhotoEditorPage> {
                         editImage();
                       }
                     },
-                    icon: Icon(Icons.edit))
+                    icon: Icon(Icons.edit)),
+                IconButton(
+                    onPressed: () {
+                      _cropImageWithSize();
+                    },
+                    icon: Icon(Icons.crop))
               ],
             ),
             _listInt != null

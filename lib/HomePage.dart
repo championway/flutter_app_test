@@ -6,6 +6,7 @@ import 'package:flutter_app_test/Page/CountdownTimerPage.dart';
 import 'package:flutter_app_test/Page/CouponWidget.dart';
 import 'package:flutter_app_test/Page/DateTimePickerPage.dart';
 import 'package:flutter_app_test/Page/DeepLinkPage.dart';
+import 'package:flutter_app_test/Page/ImagePickerPage.dart';
 import 'package:flutter_app_test/Page/MenuPage.dart';
 import 'package:flutter_app_test/Page/OwnerRestaurantNumberPage.dart';
 import 'package:flutter_app_test/Page/PhotoEditorPage.dart';
@@ -92,7 +93,10 @@ class _HomePageState extends State<HomePage> {
           _listTile(Icons.text_fields, "Show Page", () {
             pushPage(context, ShowPage());
           }),
-          _listTile(Icons.text_fields, "Photo Editor", () {
+          _listTile(Icons.text_fields, "Image Picker Page", () {
+            pushPage(context, ImagePickerPage());
+          }),
+          _listTile(Icons.photo, "Photo Editor", () {
             pushPage(context, PhotoEditorPage());
           }),
           _listTile(Icons.add_location, "Add Restaurant", () {
