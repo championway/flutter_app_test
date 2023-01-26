@@ -42,6 +42,7 @@ class _ImagePickerPageState extends State<ImagePickerPage> {
   String? _currentImagePath;
 
   List<String> _selectedPathList = [];
+
 //  List<ImageSelectModel> _selectedImageList = [];
 //  int _totalSelectedOrder = 0;
 
@@ -76,16 +77,68 @@ class _ImagePickerPageState extends State<ImagePickerPage> {
     int order = 0;
     bool isSelect = _selectedPathList.contains(path);
     if (isSelect) order = _selectedPathList.indexOf(path) + 1;
-    return Stack(
-      children: [
-        Image.file(
-          File(path),
-          fit: BoxFit.cover,
-        ),
-        Visibility(
-            visible: isSelect,
-            child: Positioned(right: 3, top: 3, child: Text("$order")))
-      ],
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _currentImagePath = path;
+        });
+      },
+      onDoubleTap: (){
+        selectedImageFunction(path);
+      },
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.file(
+              File(path),
+              fit: BoxFit.cover,
+            ),
+          ),
+          Positioned(
+            right: 4,
+            top: 4,
+            child: GestureDetector(
+              onTap: () {
+                selectedImageFunction(path);
+              },
+              child: Center(
+                child: Container(
+                  width: 17.5,
+                  height: 17.5,
+                  decoration: BoxDecoration(
+                    color: isSelect
+                        ? Colors.blue.withOpacity(1)
+                        : Colors.grey.withOpacity(0.4),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white,
+                      width: 1.0,
+                      style: BorderStyle.solid,
+                    ),
+                  ),
+                  child: Visibility(
+                    visible: isSelect,
+                    child: Center(
+                      child: Text(
+                        "$order",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+//        Visibility(
+//            visible: isSelect,
+//            child: Positioned(right: 3, top: 3, child: Text("$order")))
+        ],
+      ),
     );
   }
 
@@ -179,17 +232,7 @@ class _ImagePickerPageState extends State<ImagePickerPage> {
                             mainAxisSpacing: 4),
                         itemBuilder: (_, i) {
                           String path = _fileListModel!.filePathList[i];
-                          return GestureDetector(
-                            child: imageThumbnailWidget(path),
-                            onTap: () {
-                              setState(() {
-                                _currentImagePath = path;
-                              });
-                            },
-                            onLongPress: () {
-                              selectedImageFunction(path);
-                            },
-                          );
+                          return imageThumbnailWidget(path);
                         },
                         itemCount: _fileListModel!.filePathList.length),
                   )
