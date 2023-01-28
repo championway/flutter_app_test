@@ -4,9 +4,12 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app_test/Util/Util.dart';
+import 'package:image_crop/image_crop.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as IMG;
+import 'package:image_size_getter/file_input.dart';
+import 'package:image_size_getter/image_size_getter.dart';
 
 class PhotoEditorPage extends StatefulWidget {
   @override
@@ -35,12 +38,12 @@ class _PhotoEditorPageState extends State<PhotoEditorPage> {
     }
   }
 
-  IMG.Image? fileToImage(File? file){
+  IMG.Image? fileToImage(File? file) {
     if (file == null) return null;
     return IMG.decodeImage(file.readAsBytesSync());
   }
 
-  Uint8List? intListToUInt8List(List<int>? list){
+  Uint8List? intListToUInt8List(List<int>? list) {
     if (list == null) return null;
     Uint8List.fromList(list);
   }
@@ -110,14 +113,65 @@ class _PhotoEditorPageState extends State<PhotoEditorPage> {
     }
   }
 
-  _cropImageWithSize(){
-    if (_showImage == null) return;
-    IMG.Image? img = IMG.decodeImage(_showImage!.readAsBytesSync());
-    IMG.Image cropImg =  IMG.copyCrop(img!, 5, 10, 50, 80);
-    setState(() {
-      _listInt = IMG.encodePng(cropImg);
-    });
+  Rect getImageCroppingRect({required double ratio, required double width, required double height}) {
+    double origRatio = width / height;
+    double rectL = 0, rectR = 1, rectT = 0, rectB = 1;
+    if (origRatio > ratio) {
+      // crop width
+      double croppingWidth = height * ratio;
+      double croppingRatio = (width - croppingWidth) / width;
+      rectL = croppingRatio / 2;
+      rectR = 1 - rectL;
+    } else {
+      // crop height
+      double croppingHeight = width / ratio;
+      double croppingRatio = (height - croppingHeight) / height;
+      rectT = croppingRatio / 2;
+      rectB = 1 - rectT;
+    }
+    print("$rectL, $rectT, $rectR, $rectB");
+    return Rect.fromLTRB(rectL, rectT, rectR, rectB);
+  }
 
+  _cropImageWithSize1() async {
+    if (_image == null) return;
+    final origSize = ImageSizeGetter.getSize(FileInput(_image!));
+    print(origSize);
+    final stopwatch = Stopwatch();
+    stopwatch.start();
+    File croppedFile = await ImageCrop.cropImage(
+      file: _image!,
+      area: getImageCroppingRect(ratio: 1, width: (origSize.width).toDouble(), height: (origSize.height).toDouble()),
+    );
+    print("cropImage : ${stopwatch.elapsedMilliseconds}"); // Likely > 0.
+    stopwatch.reset();
+    final cropSize = ImageSizeGetter.getSize(FileInput(croppedFile));
+    print("getSize : ${stopwatch.elapsedMilliseconds}"); // Likely > 0.
+    print('$cropSize');
+    stopwatch.stop();
+    setState(() {
+      _showImage = croppedFile;
+    });
+  }
+
+  _cropImageWithSize2() {
+    if (_image == null) return;
+    final stopwatch1 = Stopwatch();
+    stopwatch1.start();
+    final stopwatch = Stopwatch();
+    stopwatch.start();
+    IMG.Image? img = IMG.decodeImage(_image!.readAsBytesSync());
+    print("Decode : ${stopwatch.elapsedMilliseconds}"); // Likely > 0.
+    stopwatch.reset();
+    IMG.Image cropImg = IMG.copyCrop(img!, 5, 10, 550, 580);
+    print("CopyCrop : ${stopwatch.elapsedMilliseconds}"); // Likely > 0.
+    stopwatch.reset();
+    _listInt = IMG.encodePng(cropImg);
+    print("Encode : ${stopwatch.elapsedMilliseconds}"); // Likely > 0.
+    stopwatch.stop();
+    print("Total : ${stopwatch1.elapsedMilliseconds}"); // Likely > 0.
+    stopwatch1.stop();
+    setState(() {});
   }
 
   @override
@@ -160,7 +214,12 @@ class _PhotoEditorPageState extends State<PhotoEditorPage> {
                     icon: Icon(Icons.edit)),
                 IconButton(
                     onPressed: () {
-                      _cropImageWithSize();
+                      _cropImageWithSize1();
+                    },
+                    icon: Icon(Icons.crop)),
+                IconButton(
+                    onPressed: () {
+                      _cropImageWithSize2();
                     },
                     icon: Icon(Icons.crop))
               ],
@@ -168,7 +227,10 @@ class _PhotoEditorPageState extends State<PhotoEditorPage> {
             _listInt != null
                 ? Image.memory(Uint8List.fromList(_listInt!))
                 : (_showImage != null
-                    ? Image.file(_showImage!)
+                    ? Image.file(
+                        _showImage!,
+                        cacheWidth: 640,
+                      )
                     : SizedBox.shrink()),
           ],
         ),
